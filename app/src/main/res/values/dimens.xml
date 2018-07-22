@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Margin around the floating action button in CatalogActivity -->
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Category list padding value used for left/right margin -->
+    <dimen name="category_left_right_margin">16dp</dimen>
+    <!-- Category list padding value used for top/bottom margin -->
+    <dimen name="category_top_bottom_margin">8dp</dimen>
+
+    <!-- Height of each list item -->
+    <dimen name="list_item_height">88dp</dimen>
+
+</resources>
