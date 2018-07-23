@@ -146,7 +146,7 @@ public class ProductProvider extends ContentProvider {
 
         // Check that the name is not null
         String name = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
-        if (name == null) {
+        if (TextUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Product requires a name");
         }
 
@@ -164,13 +164,13 @@ public class ProductProvider extends ContentProvider {
 
         // Check that the supplier name is not null
         String supplierName = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
-        if (supplierName == null) {
+        if (TextUtils.isEmpty(supplierName)) {
             throw new IllegalArgumentException("Product requires a name");
         }
 
         // Check that the supplier phone is not null
         String supplierPhone = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE);
-        if (supplierPhone == null) {
+        if (TextUtils.isEmpty(supplierPhone)) {
             throw new IllegalArgumentException("Product requires a name");
         }
 

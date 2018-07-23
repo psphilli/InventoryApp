@@ -17,6 +17,8 @@ import android.telephony.PhoneNumberUtils;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -35,6 +37,10 @@ import java.util.regex.Pattern;
  * Allows user to create a new product or edit an existing one.
  */
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    ///region Fields
+
+    private static final String LOG_TAG = EditorActivity.class.getName();
 
     /** EditText field to enter the product's name */
     private EditText mNameEditText;
@@ -56,6 +62,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     // Edit dirty flag to avoid missing edits before save is clicked
     private boolean mProductHasChanged = false;
+
+    ///endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,39 +327,48 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, name);
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, Float.parseFloat(price));
-        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, Integer.parseInt(quantity));
+        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
         values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME, supplierName);
         values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE, supplierPhone);
 
         boolean success = false;
-        if (mCurrentProductUri == null) {
+        try {
+            if (mCurrentProductUri == null) {
             // Insert the new row, returning the primary key value of the new row
-            Uri uri = getContentResolver().insert(
-                    ProductEntry.CONTENT_URI,
-                    values);
+                 Uri uri = getContentResolver().insert(
+                        ProductEntry.CONTENT_URI,
+                        values);
 
-            if (uri != null)
-                success = true;
-        }
-        else {
-            // Update the existing row, returning the primary key value of the existing row
-            int rowsUpdated;
-            try {
+                if (uri != null)
+                    success = true;
+            }
+            else {
+                // Update the existing row, returning the primary key value of the existing row
+                int rowsUpdated;
                 rowsUpdated = getContentResolver().update(
                         mCurrentProductUri,
                         values,
                         null,
                         null
                 );
-            }
-            catch (IllegalArgumentException ex) {
-                Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-                return false;
-            }
 
-            if (rowsUpdated == 1)
-                success = true;
+                if (rowsUpdated == 1)
+                    success = true;
+            }
+        }
+        catch (IllegalArgumentException ex) {
+            Toast toast = Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.show();
+            return false;
+        }
+        catch (Exception ex) {
+            Log.e(LOG_TAG, "There was a problem with saving product: ", ex);
+            Toast toast = Toast.makeText(this, R.string.editor_product_save_failed, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.show();
+            return false;
         }
 
         // Show a toast message depending on whether or not the insert/update was successful
